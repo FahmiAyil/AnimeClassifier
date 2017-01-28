@@ -1,7 +1,5 @@
 import pymysql
 import sys
-import base64
-import pickle
 
 class database:
     host = "localhost"
@@ -17,4 +15,3 @@ class database:
         sys.exit("KONEKSI DENGAN DATABASE GAGAL !!!!!", e)
 
     dbcursor = conn.cursor()
-    
