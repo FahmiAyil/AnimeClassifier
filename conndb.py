@@ -9,7 +9,6 @@ class database:
     pasw = ""
     db   = "animelist"
 
-    # Konek database
     try:
         conn = pymysql.connect(host = host, user = user, password = pasw, db = db, use_unicode=True, charset='utf8')
         print("TERKONEKSI DENGAN DATABASE")
@@ -17,6 +16,5 @@ class database:
     except Exception as e:
         sys.exit("KONEKSI DENGAN DATABASE GAGAL !!!!!", e)
 
-    # kursor
     dbcursor = conn.cursor()
-    print("----------------------------------------------------------------------")
+    
