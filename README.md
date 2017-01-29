@@ -10,3 +10,5 @@
 * Run Scrape.py to start scrape site [MyAnimeList](https://myanimelist.net/anime.php)
 * Run Filestem.py to start the text preprocessing techniques (Casefolding, Tokenizing, Stopword Removal, Stemming)
 * Run Classifier.py to identify a new synopsis and classify genre by a new synopsis using Naive Bayes algorithm
+
+> fahmi ayil
