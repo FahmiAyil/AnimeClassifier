@@ -5,7 +5,7 @@
 4. Using lxml webscrape to scrape website [MyAnimeList](https://myanimelist.net/anime.php)
 
 # How to run program
-* Make sure you have import the database '''animelist.sql'''
+* Make sure you have import the database 'animelist.sql'
 * Run Conn.py to check the database has been connected
 * Run Scrape.py to start scrape site [MyAnimeList](https://myanimelist.net/anime.php)
 * Run Filestem.py to start the text preprocessing techniques (Casefolding, Tokenizing, Stopword Removal, Stemming)
