@@ -19,7 +19,6 @@ The story takes place in the center of Tokyo. It is one of the places left for t
 episode = "6 eps"
 rating = "7.47"
 
-# MENGUBAH INPUTAN UNASCII MENJADI SYMBOL ?
 link = link.encode("ascii", "replace").decode("utf-8")
 sinopsis = sinopsis.encode("ascii", "replace").decode("utf-8")
 
@@ -45,22 +44,18 @@ for s in range(len(syn_stopw)):
 print("Stemm ", syn_stopw)
 print("----------------------------------------------")
 
-# MEMASUKKAN PADA DICT
 kamus = {}
 for kata in syn_stopw:
     if kata not in kamus:
         kamus[kata] = 0
     kamus[kata] += 1
 print(kamus)
-
-# SINOPSIS YANG DI CARI DALAM BENTUK LIST TIDAK ADA YANG SAMA (DISTINCT)
 syn_list_distinct = list(set(syn_stopw))
 
 sql_check_pry = "SELECT link, genre FROM anime"
 database.dbcursor.execute(sql_check_pry)
 pry = database.dbcursor.fetchall()
 
-# CEK LINK SUDAH ADA ATAU TIDAK
 if any(link in i for i in pry):
     print("LINK SUDAH ADA")
 else:
@@ -73,25 +68,20 @@ else:
     hasil = []
     dict_hasil = {}
     for c in dbgenre:
-        print("PERHITUNGAN KASUS DAN", c)
 
-        # MENGHITUNG JUMLAH ANIME YANG GENRENYA C
         count = "SELECT COUNT(*) FROM anime WHERE genre = %s"
         database.dbcursor.execute(count, (c))
         check = database.dbcursor.fetchone()
 
-        # MENGAMBIL DATA YANG GENRENYA C
         sql = "SELECT a.link, a.genre, s.word_list FROM anime a JOIN stemword s ON a.link = s.link WHERE genre = %s"
         database.dbcursor.execute(sql, (c))
         data = database.dbcursor.fetchall()
 
-        # MENGHITUNG KATA UNIK PADA TABEL WORD
         count_word = "SELECT COUNT(*) FROM word"
         database.dbcursor.execute(count_word)
         jml_kata = database.dbcursor.fetchone()[0]
 
         # MENGHITUNG RUMUS PCI.
-        # YAITU JUMLAH DOKUMEN YANG MEMILIKI GENRE A / DENGAN TOTAL DOKUMEN
         jml_doc = check[0]
         jml_data = len(pry)
         jml_pci = jml_doc/jml_data
@@ -99,46 +89,40 @@ else:
         jml_freq = 0
         jml_fwc = 0
         temp_hasil = []
-        # PERULANGAN KATA YANG DICARI
+
         for l in syn_list_distinct:
             print("     Kata yang di cari adalah ", l)
             for y in range(len(data)):
-                # MENGAMBIL KAMUS PADA TABEL YANG BERGENRE C
+
                 kamus_raw = data[y][2]
                 kamus_b64 = base64.b64decode(kamus_raw)
                 kamus = pickle.loads(kamus_b64)
-                # print("         ",kamus)
 
-                # MENGECEK APABILA KATA YANG DICARI ADA PADA KAMUS, MAKA jml_freq + 1
                 if l in kamus:
                     jml_freq += kamus[l]
 
-                # JUMLAH KATA DARI KAMUS YANG BERGENRE C
                 jml_fwc += sum(kamus.values())
 
             print("         JUMLAH KEMUNCULAN KATA = ", jml_freq)
             print("         JUMLAH KATA PADA GENRE = ", jml_fwc)
-            # TEMP HASIL, MENGHITUNG RUMUS AWAL KEMUNCULAN KATA + 1 / JML KATA PADA GENRE
+
             temp_hasil.append((jml_freq+1)/(jml_fwc+jml_kata))
             test = (jml_freq+1)/(jml_fwc+jml_kata)
             print(test)
-            # RESET NILAI FWC DAN FREQ
+
             jml_fwc = 0
             jml_freq = 0
 
-        # MENGALIKAN SETIAP HASIL DARI TEMP HASIL PADA SATU GENRE
         kali = 1
         for t in temp_hasil:
             kali *= t
-        # MEMASUKKAN HASIL PADA GENRE KE i PADA LIST HASIL
+
         hasil.append(kali*jml_pci)
-        # MEMASUKKAN HASIL DAN GENRE PADA KAMUS
+
         dict_hasil[c] = hasil[-1]
         print("*********************************************************")
-        # tampil hasil
         print("Hasil terhadap kategori",c, "adalah", hasil[-1])
         print("*********************************************************")
 
-    # MENGHITUNG NILAI MAKSIMAL MENJADI KATEGORI AKHIR
     genre = list(dict(sorted(dict_hasil.items(), key = operator.itemgetter(1), reverse = True)[:2]))
     print("2 GENRE PALING DEKAT DENGAN DATA YANG DICARI ADALAH =", genre[0] ,",", genre[1])
