@@ -12,9 +12,7 @@ anime = database.dbcursor.fetchall()
 for counter in range(len(anime)):
     temp_link = anime[counter][0]
     try:
-        # mengambil sinopsis
         temp_syn = anime[counter][1]
-        # case folding
         syn_lower = temp_syn.lower()
         # tokenizing
         syn_tokenize = re.findall(r"[\w]+", syn_lower)
@@ -33,24 +31,22 @@ for counter in range(len(anime)):
         print("Stemm ", syn_stopw)
         print(counter,"----------------------------------------------")
 
-        # DATABASE operation
         sql_check_pry = "SELECT link FROM stemword"
         database.dbcursor.execute(sql_check_pry)
         pry = database.dbcursor.fetchall()
 
-        # CHECK DATABASE
         if any(temp_link in c for c in pry):
             print("DUMP SUDAH ADA")
         else:
             sql_insert_data = "INSERT INTO stemword (link, word_list)\
             VALUES (%s, %s)"
-            # MEMASUKKAN PADA DICT
+
             kamus = {}
             for kata in syn_stopw:
                 if kata not in kamus:
                     kamus[kata] = 0
                 kamus[kata] += 1
-            # PROSES DUMP
+
             syn_dump = pickle.dumps(kamus)
             print(syn_dump)
             syn_enc = base64.b64encode(syn_dump)
@@ -59,7 +55,6 @@ for counter in range(len(anime)):
             database.conn.commit()
             print ("STEM DUMP DITAMBAHKAN")
 
-        # INSERT KATA UNIK
         for w in syn_stopw:
             sql_check_word = "SELECT word FROM word"
             database.dbcursor.execute(sql_check_word)
